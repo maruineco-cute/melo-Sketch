@@ -28,8 +28,16 @@ input[type="text"],input:not([type]),textarea,[contenteditable="true"]{
 .image-formats .btn.on{border-color:#f7b6d1;color:#f7b6d1;background:#f7b6d111}
 
 .instrument[data-tone="4"]{grid-column:1/-1}
+
+.workspace.menu-right>.sidebar{order:2;border-right:0;border-left:1px solid var(--line)}
+.workspace.menu-right>.art-area{order:1}
+.menu-position{display:flex;align-items:center;gap:2px;background:#ffffff05;border:1px solid var(--line);border-radius:8px;padding:2px 3px}
+.menu-position span{font-size:9px;color:#aaa0b4;padding:0 5px}
+.menu-position button{border:0;border-radius:5px;background:none;color:#9e94ad;font-size:10px;min-height:24px;min-width:27px;padding:0 5px}
+.menu-position button[aria-pressed="true"]{background:#f7b6d12b;color:#f7b6d1}
+@media(max-width:700px){.menu-position{display:none}.workspace.menu-right>.sidebar{order:0;border-left:0;border-right:0}.workspace.menu-right>.art-area{order:1}}
 </style></head><body>
-<header><div class="brand">メロスケッチ<small>YOUR ART. YOUR SOUND.</small></div><div class="header-right"><span class="small-note">絵と音を、ひとつの作品に。</span><button class="btn" id="saveImage">絵を保存</button><button class="btn main" id="saveVideo" title="絵と音を動画にして、投稿先を選びます">投稿・シェア ↗</button></div></header>
+<header><div class="brand">メロスケッチ<small>YOUR ART. YOUR SOUND.</small></div><div class="header-right"><span class="small-note">絵と音を、ひとつの作品に。</span><button class="btn" id="saveImage">絵を保存</button><button class="btn main" id="saveVideo" title="絵と音を動画にして保存します">動画を保存</button></div></header>
 <div class="workspace"><aside class="sidebar" aria-label="描画ツール">
 <section class="section"><div class="label">音色 <span id="audioStatus">タップで試聴</span></div><div class="instruments"><button class="instrument active" data-tone="0" aria-pressed="true"><strong>マリンバ</strong><small>木の録音音源</small></button><button class="instrument" data-tone="2" aria-pressed="false"><strong>ピアノ</strong><small>グランド実録音</small></button><button class="instrument" data-tone="1" aria-pressed="false"><strong>ビブラフォン</strong><small>柔らかな録音音源</small></button><button class="instrument" data-tone="3" aria-pressed="false"><strong>リズム</strong><small>点でドラム</small></button><button class="instrument" data-tone="4" aria-pressed="false"><strong>ピコピコ</strong><small>ゲーム風の電子音</small></button></div></section>
 <section class="section"><div class="label">色</div><div class="colors" id="colors"></div></section>
@@ -41,10 +49,10 @@ input[type="text"],input:not([type]),textarea,[contenteditable="true"]{
 <section class="section title-section"><div class="label">作品名</div><input class="title-input" id="title" maxlength="24" value="" placeholder="作品名（任意）" aria-label="作品名"></section>
 <p class="help">色は6色＋「＋」の24色。和音ONにすると、同じ音色で重ねた線を最大3音で鳴らします。近すぎる音程は避けて整理します。描く量が多いと動作が重くなる場合があります。<br><br>動画にはこの絵と音だけを収録。ボタンや操作画面は入りません。<br><br><a href="#" id="credits">音源について</a></p>
 </aside>
-<main class="art-area"><div class="mobile-hint">色・ブラシ・背景のツールは、上のバーを横にスワイプ →</div><div class="art-toolbar"><span id="artStatus" title="描く回数の設定上限はありません。和音OFFでは最後の線を優先、ONでは最大3音で響きます。">自由に描いて、その絵を音楽に。</span><div class="actions"><button class="btn" id="undo">↶ 戻す</button><button class="btn" id="clear">クリア</button></div></div><div class="art-fit" id="artFit"><div class="art-frame" id="artFrame"><canvas id="cv" aria-label="自由に絵を描くキャンバス"></canvas><div class="empty hidden" id="empty" aria-hidden="true"></div></div></div><div class="bottom"><button class="btn main transport" id="play">▶ 絵を聴く</button><div class="clock" id="clock" aria-hidden="true"></div><span class="play-note" id="playNote">16拍の小さな音楽</span></div></main></div>
+<main class="art-area"><div class="mobile-hint">色・ブラシ・背景のツールは、上のバーを横にスワイプ →</div><div class="art-toolbar"><span id="artStatus" title="描く回数の設定上限はありません。和音OFFでは最後の線を優先、ONでは最大3音で響きます。">自由に描いて、その絵を音楽に。</span><div class="actions"><div class="menu-position" role="group" aria-label="メニューの配置"><span>メニュー</span><button data-menu-side="left" aria-pressed="true" title="メニューを左に置く">左</button><button data-menu-side="right" aria-pressed="false" title="メニューを右に置く">右</button></div><button class="btn" id="undo">↶ 戻す</button><button class="btn" id="clear">クリア</button></div></div><div class="art-fit" id="artFit"><div class="art-frame" id="artFrame"><canvas id="cv" aria-label="自由に絵を描くキャンバス"></canvas><div class="empty hidden" id="empty" aria-hidden="true"></div></div></div><div class="bottom"><button class="btn main transport" id="play">▶ 絵を聴く</button><div class="clock" id="clock" aria-hidden="true"></div><span class="play-note" id="playNote">16拍の小さな音楽</span></div></main></div>
 <div class="color-popover hidden" id="colorPopover" role="dialog" aria-label="追加の24色"><div class="color-popover-head">もっと色 · 24色<button id="closeColors" aria-label="色パレットを閉じる">×</button></div><div class="extra-colors" id="extraColors"></div></div>
 <div class="toast" id="toast" role="status"></div>
-<div class="modal hidden" id="modal"><div class="dialog"><h2 id="modalTitle">音付きの作品をつくる</h2><p id="modalText"></p><div class="image-formats hidden" id="imageFormats"><span>保存形式</span><button class="btn on" id="imagePNG" aria-pressed="true">PNG</button><button class="btn" id="imageJPG" aria-pressed="false">JPG</button></div><video id="videoPreview" playsinline controls></video><div class="progress" id="progress"><i></i></div><div class="row"><button class="btn" id="modalClose">閉じる</button><button class="btn" id="download" style="display:none">保存する</button><button class="btn main" id="share" style="display:none">投稿先を選ぶ ↗</button></div></div></div>
+<div class="modal hidden" id="modal"><div class="dialog"><h2 id="modalTitle">音付きの作品をつくる</h2><p id="modalText"></p><div class="image-formats hidden" id="imageFormats"><span>保存形式</span><button class="btn on" id="imagePNG" aria-pressed="true">PNG</button><button class="btn" id="imageJPG" aria-pressed="false">JPG</button></div><video id="videoPreview" playsinline controls></video><div class="progress" id="progress"><i></i></div><div class="row"><button class="btn" id="modalClose">閉じる</button><button class="btn main" id="download" style="display:none">保存する</button></div></div></div>
 <script>
 'use strict';
 // Static hosting stays browser-only. Optional server.py enables its own converter.
@@ -80,7 +88,16 @@ document.addEventListener('pointerdown',e=>{if(!$('colorPopover').contains(e.tar
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeColorPalette()});
 for(let i=0;i<STEPS;i++)$('clock').appendChild(document.createElement('i'));
 function notify(text){$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2600)}
-function update(){const n=strokes.filter(s=>!s.isEraser).length;$('empty').classList.add('hidden');$('artStatus').textContent=n?'描画 '+n+'回 · 音を添えてシェア':'自由に描いて、その絵を音楽に。';$('undo').disabled=!strokes.length;}
+function update(){const n=strokes.filter(s=>!s.isEraser).length;$('empty').classList.add('hidden');$('artStatus').textContent=n?'描画 '+n+'回 · 絵と音を保存':'自由に描いて、その絵を音楽に。';$('undo').disabled=!strokes.length;}
+function setMenuSide(side,remember=true){
+ if(recording||pointer!==null)return;
+ side=side==='right'?'right':'left';
+ document.querySelector('.workspace').classList.toggle('menu-right',side==='right');
+ document.querySelectorAll('[data-menu-side]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.menuSide===side)));
+ if(remember){try{localStorage.setItem('melosketch-menu-side',side)}catch(e){}}
+ closeColorPalette();requestAnimationFrame(resize);
+}
+document.querySelectorAll('[data-menu-side]').forEach(b=>b.addEventListener('click',()=>setMenuSide(b.dataset.menuSide)));
 function resize(){const r=$('artFit').getBoundingClientRect(),w=Math.max(20,r.width-(innerWidth<=700?24:44)),h=Math.max(20,r.height-12);canvasW=Math.min(w,h*ratio);canvasH=canvasW/ratio;DPR=Math.min(devicePixelRatio||1,2);$('artFrame').style.width=canvasW+'px';$('artFrame').style.height=canvasH+'px';canvas.width=Math.round(canvasW*DPR);canvas.height=Math.round(canvasH*DPR);}
 new ResizeObserver(resize).observe($('artFit'));
 function pos(e){const r=canvas.getBoundingClientRect();return{x:clamp((e.clientX-r.left)/r.width,0,1),y:clamp((e.clientY-r.top)/r.height,0,1),pressure:e.pressure>.05?e.pressure:.5}}
@@ -268,7 +285,7 @@ function pulseEvents(events,now){for(const e of events){flashes.push({x:e.x,y:e.
 function frame(now){if(running&&ac){while(visualQueue.length&&visualQueue[0].t<=ac.currentTime){const v=visualQueue.shift();pulseEvents(v.events,now);$('clock').querySelectorAll('i').forEach((i,n)=>i.classList.toggle('on',n===v.step))}}
  if(recording&&recordSnapshot&&ac&&recordStarted){const elapsed=ac.currentTime-recordStarted;while(recordVisualIndex<recordVisual.length&&recordVisual[recordVisualIndex].t<=elapsed){pulseEvents(recordVisual[recordVisualIndex].events,now);recordVisualIndex++}const progress=clamp(elapsed/recordLength,0,1);$('progress').firstElementChild.style.width=progress*100+'%';$('modalText').textContent='絵と音だけを収録しています… '+Math.round(progress*100)+'%';render(exportCtx,exportCanvas.width,exportCanvas.height,recordSnapshot.strokes,recordSnapshot.background,recordSnapshot.title,now,true)}
  flashes=flashes.filter(f=>now-f.t<720);render(ctx,canvas.width,canvas.height,draft?[...strokes,draft]:strokes,background,$('title').value,now,true);requestAnimationFrame(frame);}
-function openModal(title,text){++imageChoiceGeneration;imageExportCanvas=null;$('imageFormats').classList.add('hidden');$('modal').classList.remove('hidden');$('modalTitle').textContent=title;$('modalText').textContent=text;$('videoPreview').style.display='none';$('progress').style.display='none';$('download').style.display='none';$('share').style.display='none';$('modalClose').disabled=false;}
+function openModal(title,text){++imageChoiceGeneration;imageExportCanvas=null;$('imageFormats').classList.add('hidden');$('modal').classList.remove('hidden');$('modalTitle').textContent=title;$('modalText').textContent=text;$('videoPreview').style.display='none';$('progress').style.display='none';$('download').style.display='none';$('modalClose').disabled=false;}
 function closeModal(){++imageChoiceGeneration;imageExportCanvas=null;if(recording)cancelExport();$('videoPreview').pause();$('modal').classList.add('hidden')}
 $('modalClose').addEventListener('click',closeModal);
 function filename(ext){
@@ -277,34 +294,22 @@ function filename(ext){
  return base+'-'+Date.now().toString(36)+'.'+ext;
 }
 
-function outputReady(blob,name,video=false){if(savedUrl)URL.revokeObjectURL(savedUrl);savedBlob=blob;savedName=name;savedUrl=URL.createObjectURL(blob);$('download').style.display='block';$('share').style.display='block';updateShareLabel();$('progress').style.display='none';$('modalClose').disabled=false;if(video){$('videoPreview').src=savedUrl;$('videoPreview').style.display='block'}$('modalTitle').textContent='作品ができました';}
+function outputReady(blob,name,video=false){if(savedUrl)URL.revokeObjectURL(savedUrl);savedBlob=blob;savedName=name;savedUrl=URL.createObjectURL(blob);$('download').style.display='block';$('progress').style.display='none';$('modalClose').disabled=false;if(video){$('videoPreview').src=savedUrl;$('videoPreview').style.display='block'}$('modalTitle').textContent='作品ができました';}
 function downloadBlob(){if(!savedBlob)return;const a=document.createElement('a');a.href=savedUrl;a.download=savedName;a.style.display='none';document.body.appendChild(a);a.click();setTimeout(()=>a.remove(),1000);}
 $('download').addEventListener('click',downloadBlob);
-function nativeShareAvailable(){
- if(!savedBlob||!navigator.canShare||!navigator.share)return false;
- try{return navigator.canShare({files:[new File([savedBlob],savedName,{type:savedBlob.type})]})}catch(e){return false}
-}
-function updateShareLabel(){$('share').textContent=nativeShareAvailable()?'投稿先を選ぶ ↗':'保存して投稿';}
-$('share').addEventListener('click',async()=>{
- if(!savedBlob)return;
- if(!nativeShareAvailable()){downloadBlob();notify('作品を保存しました。投稿アプリで、この作品を選んでください');return}
- const file=new File([savedBlob],savedName,{type:savedBlob.type});
- try{await navigator.share({files:[file],title:$('title').value})}
- catch(e){if(e.name!=='AbortError'){downloadBlob();notify('共有メニューが使えないため、保存に切り替えました')}}
-});
 function chooseImageFormat(format){
  if(!imageExportCanvas)return;
  imageFormat=format;
  $('imagePNG').classList.toggle('on',format==='png');$('imageJPG').classList.toggle('on',format==='jpg');
  $('imagePNG').setAttribute('aria-pressed',String(format==='png'));$('imageJPG').setAttribute('aria-pressed',String(format==='jpg'));
- $('download').style.display='none';$('share').style.display='none';$('modalTitle').textContent='絵を保存';$('modalText').textContent='画像を準備しています…';
+ $('download').style.display='none';$('modalTitle').textContent='絵を保存';$('modalText').textContent='画像を準備しています…';
  const generation=exportGeneration,choice=++imageChoiceGeneration;
  const mime=format==='jpg'?'image/jpeg':'image/png';
  imageExportCanvas.toBlob(blob=>{
   if(generation!==exportGeneration||choice!==imageChoiceGeneration||$('modal').classList.contains('hidden'))return;
   if(!blob){$('modalText').textContent='画像を作成できませんでした。別の形式をお試しください。';return}
   outputReady(blob,filename(format));
-  $('modalText').textContent=(format==='jpg'?'JPG':'PNG')+'画像（1080px幅）です。操作画面や描画回数は入らず、絵だけを保存・シェアできます。';
+  $('modalText').textContent=(format==='jpg'?'JPG':'PNG')+'画像（1080px幅）です。操作画面や描画回数は入らず、絵だけを保存できます。';
  },mime,format==='jpg'?.94:undefined);
 }
 $('imagePNG').addEventListener('click',()=>chooseImageFormat('png'));
@@ -318,7 +323,7 @@ $('saveImage').addEventListener('click',()=>{
 });
 
 async function offlineSong(snapshot){const duration=60/snapshot.bpm/2,total=duration*STEPS*2+1.2,offline=new OfflineAudioContext(2,Math.ceil(total*48000),48000),eng=makeEngine(offline);const events=[];for(let loop=0;loop<2;loop++)for(let step=0;step<STEPS;step++){const t=(loop*STEPS+step)*duration;events.push({t,events:playStep(eng,snapshot.strokes,step,t,snapshot.beat,snapshot.chords)})}eng.master.gain.setValueAtTime(.62,0);eng.master.gain.setValueAtTime(.62,total-.6);eng.master.gain.linearRampToValueAtTime(0,total);const buffer=await offline.startRendering();return{buffer,events,total};}
-function setRecordingControls(disabled){document.querySelectorAll('.sidebar button,.sidebar input,#saveImage,#saveVideo,#play,#undo').forEach(b=>b.disabled=disabled);if(!disabled){update();$('size').disabled=brush==='eraser';}}
+function setRecordingControls(disabled){document.querySelectorAll('.sidebar button,.sidebar input,#saveImage,#saveVideo,#play,#undo,[data-menu-side]').forEach(b=>b.disabled=disabled);if(!disabled){update();$('size').disabled=brush==='eraser';}}
 function cancelExport(){
  ++exportGeneration;
  recording=false;recordStarted=0;recordSnapshot=null;recordVisual=[];recordVisualIndex=0;
@@ -331,7 +336,7 @@ function cancelExport(){
 }
 $('saveVideo').addEventListener('click',async()=>{
  if(recording)return;if(!strokes.length){notify('まずは絵を描いてください');return}if(!window.MediaRecorder||!canvas.captureStream){openModal('このブラウザでは動画保存できません','ChromeやSafariの最新版で開いてください。「絵を保存」は利用できます。');return}
- stop();const generation=++exportGeneration;recording=true;setRecordingControls(true);openModal('投稿する作品をつくる','絵と音を動画にします。作成後に投稿先を選べます（自動投稿はしません）。');$('modalClose').disabled=false;$('modalClose').textContent='録画を中止';$('progress').style.display='block';$('progress').firstElementChild.style.width='0%';
+ stop();const generation=++exportGeneration;recording=true;setRecordingControls(true);openModal('音付き動画を保存','絵と音を動画にします。作成後に「保存する」を押してください。');$('modalClose').disabled=false;$('modalClose').textContent='録画を中止';$('progress').style.display='block';$('progress').firstElementChild.style.width='0%';
  try{
  await initAudio();if(generation!==exportGeneration)return;recordSnapshot={strokes:strokes.map(s=>({...s,points:s.points.map(p=>({...p})),notes:new Map(s.notes)})),background,title:$('title').value,bpm,beat:beatEnabled,chords:chordEnabled,ratio};const rendered=await offlineSong(recordSnapshot);if(generation!==exportGeneration)return;
  exportCanvas=document.createElement('canvas');exportCanvas.width=1080;exportCanvas.height=Math.round(1080/recordSnapshot.ratio);exportCtx=exportCanvas.getContext('2d');render(exportCtx,exportCanvas.width,exportCanvas.height,recordSnapshot.strokes,recordSnapshot.background,recordSnapshot.title,performance.now(),false);
@@ -349,7 +354,7 @@ $('saveVideo').addEventListener('click',async()=>{
  }
  if(generation!==exportGeneration)return;
  const mp4=type.includes('mp4');finished();outputReady(blob,filename(mp4?'mp4':'webm'),true);
- $('modalText').textContent=type.includes('mp4a')?'絵＋音楽のMP4動画（H.264 / AAC）です。保存、またはシェアしてください。':mp4?'絵＋音楽のMP4動画です。投稿先で読めない場合はH.264 / AACへの変換が必要です。':'絵＋音楽のWebM動画です。投稿先が非対応の場合はMP4への変換が必要です。';
+ $('modalText').textContent=type.includes('mp4a')?'絵＋音楽のMP4動画（H.264 / AAC）です。「保存する」を押してください。':mp4?'絵＋音楽のMP4動画です。一部のアプリで読み込めない場合はH.264 / AACへの変換が必要です。':'絵＋音楽のWebM動画です。再生するアプリが非対応の場合はMP4への変換が必要です。';
  };
  recorder.onerror=()=>{finished();$('modalText').textContent='録画に失敗しました。絵の保存、または別のブラウザをお試しください';$('modalClose').disabled=false;};
  recordVisual=rendered.events;recordVisualIndex=0;flashes=[];recordLength=rendered.total;recordStarted=ac.currentTime+.1;recorder.start(200);recordSource.start(recordStarted);recordSource.onended=()=>{if(recorder.state!=='inactive')recorder.stop()};
@@ -357,5 +362,6 @@ $('saveVideo').addEventListener('click',async()=>{
 });
 $('credits').addEventListener('click',e=>{e.preventDefault();openModal('音源について','マリンバ：University of Iowa Musical Instrument Samples / Lawrence Fritts。毛糸巻きマレットの実録音を9音使用。https://theremin.music.uiowa.edu/Mismarimba.html。ピアノ：University of Iowa Musical Instrument Samples / Lawrence Fritts。Steinway & Sons Model Bのステレオ録音。9音・2段階の強弱を収録し、人工的な音程変更はしていません。公式の使用条件：あらゆるプロジェクトに制限なく使用可能。https://theremin.music.uiowa.edu/MIS.html / MISpiano.html。ビブラフォン：University of Iowa MIS / Lawrence Fritts。短い余韻の実録音を9音使用。録音ノイズ低減と減衰処理済み。https://theremin.music.uiowa.edu/Misvibraphone.html。リズムとピコピコは音響合成。ピコピコは矩形波を使ったゲーム風の電子音。音源はHTML内に含まれています。');});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&!recording)stop()});
-resize();update();requestAnimationFrame(frame);
+let initialMenuSide='left';try{initialMenuSide=localStorage.getItem('melosketch-menu-side')||'left'}catch(e){}
+setMenuSide(initialMenuSide,false);resize();update();requestAnimationFrame(frame);
 </script></body></html>
